@@ -91,7 +91,7 @@ public:
     }
 
     void addPolyline(vector<vec2> vertices) {
-        polylines.push_back(Polyline(vertices), this->world);
+        polylines.push_back(Polyline(vertices, this->world));
     }
 
     void clear() {
