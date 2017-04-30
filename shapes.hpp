@@ -57,7 +57,7 @@ public:
         this->world = external_world;
         b2BodyDef bodydef;
         bodydef.type = b2_staticBody;
-        this->body = this->world->createBody(&bodydef);
+        this->body = this->world->CreateBody(&bodydef);
 
         vector<b2Vec2> v;
         for (int i = 0; i < vertices.size(); i++)

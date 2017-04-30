@@ -31,6 +31,9 @@ public:
 
     vec2 worldMin, worldMax;
 
+    b2World *world;
+    b2MouseJoint *mouse = NULL;
+
     PencilPhysics() {
         worldMin = vec2(-8, 0);
         worldMax = vec2(8, 9);
@@ -50,14 +53,14 @@ public:
 
         // TODO: Create a Box2D world and make these shapes static
         // bodies in it.
-
+        this->world = new b2World(b2Vec2(0, -9.8));
         // Create walls
         vector<vec2> wallVerts;
         wallVerts.push_back(vec2(worldMin.x, worldMax.y));
         wallVerts.push_back(vec2(worldMin.x, worldMin.y));
         wallVerts.push_back(vec2(worldMax.x, worldMin.y));
         wallVerts.push_back(vec2(worldMax.x, worldMax.y));
-        walls = Polyline(wallVerts);
+        walls = Polyline(wallVerts, world);
         // Create two static bodies
         redCircle = Circle(vec2(-5,2), 0.5);
         whiteBox = Box(vec2(5,2), vec2(0.9,0.9));
