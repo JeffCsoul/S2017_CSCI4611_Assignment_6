@@ -3,6 +3,8 @@
 
 #include <glm/glm.hpp>
 #include <vector>
+#include <Box2D/Box2D.h>
+
 using namespace std;
 using glm::vec2;
 
@@ -46,11 +48,30 @@ public:
 class Polyline {
 public:
     vector<vec2> vertices;
+    b2World *world;
+    b2Body *body;
+
     Polyline() {}
-    Polyline(vector<vec2> vertices) {
+    Polyline(vector<vec2> vertices, b2World *external_world) {
         this->vertices = vertices;
+        this->world = external_world;
+        b2BodyDef bodydef;
+        bodydef.type = b2_staticBody;
+        this->body = this->world->createBody(&bodydef);
+
+        vector<b2Vec2> v;
+        for (int i = 0; i < vertices.size(); i++)
+          v.push_back(b2Vec2(vertices[i].x, vertices[i].y));
+        b2ChainShape chainshape;
+        chainshape.CreateChain(&v[0], v.size());
+
+        b2FixtureDef fixdef;
+        fixdef.shape = & chainshape;
+        this->body->CreateFixture(&fixdef);
     }
-    void destroy() {}
+    void destroy() {
+      this->world->DestroyBody(body);
+    }
 };
 
 #endif
