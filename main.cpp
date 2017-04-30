@@ -60,7 +60,7 @@ public:
         wallVerts.push_back(vec2(worldMin.x, worldMin.y));
         wallVerts.push_back(vec2(worldMax.x, worldMin.y));
         wallVerts.push_back(vec2(worldMax.x, worldMax.y));
-        walls = Polyline(wallVerts, world);
+        walls = Polyline(wallVerts, this->world);
         // Create two static bodies
         redCircle = Circle(vec2(-5,2), 0.5);
         whiteBox = Box(vec2(5,2), vec2(0.9,0.9));
@@ -91,7 +91,7 @@ public:
     }
 
     void addPolyline(vector<vec2> vertices) {
-        polylines.push_back(Polyline(vertices));
+        polylines.push_back(Polyline(vertices), this->world);
     }
 
     void clear() {
