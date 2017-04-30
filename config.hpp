@@ -6,7 +6,7 @@
 
 namespace Config {
 
-    const std::string shaderDir = "/home/narain/4611/assignments/a6-pencilphysics/democode";
+    const std::string shaderDir = "/home/zhou0745/Github_repo/4611/CSCI4611_Project_06";
 
     // Shaders
     const std::string shaderVert = shaderDir + "/constant2d.vert";
