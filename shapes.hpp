@@ -19,7 +19,7 @@ class Circle {
 public:
     vec2 center;
     float radius;
-    
+
     b2World *world;
     b2Body *body;
 
@@ -60,10 +60,12 @@ public:
     mat4 getTransformation() {
       b2Vec2 pos = body->GetPosition();
       float angle = body->GetAngle();
-      return glm::translate(vec3(pos.x,pos.y,0)) *
-             glm::rotate(angle,vec3(0,0,1));
+      return glm::translate(vec3(pos.x, pos.y, 0)) *
+             glm::rotate(angle,vec3(0, 0, 1));
     }
-    void destroy() {}
+    void destroy() {
+      this->world->DestroyBody(body);
+    }
 };
 
 class Box {
@@ -75,15 +77,49 @@ public:
     b2Body *body;
 
     Box() {}
-    Box(vec2 center, vec2 size) {
+    Box(vec2 center, vec2 size, b2World *external_world, bool fixed) {
         this->center = center;
         this->size = size;
+        this->world = external_world;
+        b2BodyDef bodydef;
+        if (fixed)
+          bodydef.type = b2_staticBody;
+        else
+          bodydef.type = b2_dynamicBody;
+        bodydef.position.Set(center.x, center.y);
+        this->body = this->world->CreateBody(&bodydef);
+
+        b2PolygonShape polygonshape;
+        polygonshape.SetAsBox(size.x / 2, size.y / 2);
+
+        b2FixtureDef fixdef;
+        fixdef.shape = &polygonshape;
+        fixdef.density = 0.5;
+        fixdef.friction = 0.5;
+        fixdef.restitution = 0.5;
+        body->CreateFixture(&fixdef);
     }
+
+    vec2 getLocalPoint(vec2 worldPoint) {
+      b2Vec2 localp = this->body->GetLocalPoint(b2Vec2(worldPoint.x,
+                                                       worldPoint.y));
+      return vec2(localp.x, localp.y);
+    }
+
     bool contains(vec2 worldPoint) {
-        vec2 d = worldPoint - center;
+        vec2 d = getLocalPoint(worldPoint) - center;
         return (abs(d.x) <= size.x/2 && abs(d.y) <= size.y/2);
     }
-    void destroy() {}
+    mat4 getTransformation() {
+      b2Vec2 pos = body->GetPosition();
+      float angle = body->GetAngle();
+      return glm::translate(vec3(pos.x, pos.y, 0)) *
+             glm::rotate(angle, vec3(0, 0, 1)) *
+             glm::translate(vec3(-center, 0));
+    }
+    void destroy() {
+      this->world->DestroyBody(body);
+    }
 };
 
 class Polyline {

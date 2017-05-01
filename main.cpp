@@ -63,7 +63,7 @@ public:
         walls = Polyline(wallVerts, this->world);
         // Create two static bodies
         redCircle = Circle(vec2(-5,2), 0.5, this->world, true);
-        whiteBox = Box(vec2(5,2), vec2(0.9,0.9));
+        whiteBox = Box(vec2(5,2), vec2(0.9,0.9), this->world, true);
     }
 
     void run() {
@@ -87,7 +87,7 @@ public:
 
     void addBox() {
         vec2 position = vec2(-5,7) + 0.5*randomVec2();
-        boxes.push_back(Box(position, vec2(1.2,0.6)));
+        boxes.push_back(Box(position, vec2(1.2,0.6), this->world, false));
     }
 
     void addPolyline(vector<vec2> vertices) {
@@ -125,7 +125,7 @@ public:
     void advanceState(float dt) {
 
         // TODO: Step the Box2D world by dt.
-
+        this->world->Step(dt, 8, 3);
     }
 
     void drawGraphics() {
@@ -150,9 +150,9 @@ public:
         draw.box(mat4(), whiteBox.center, whiteBox.size, vec3(1,1,1));
         // Draw all the other circles, boxes, and polylines
         for (int i = 0; i < circles.size(); i++)
-            draw.circle(mat4(), circles[i].center, circles[i].radius, vec3(0,0,0));
+            draw.circle(circles[i].getTransformation(), circles[i].center, circles[i].radius, vec3(0,0,0));
         for (int i = 0; i < boxes.size(); i++)
-            draw.box(mat4(), boxes[i].center, boxes[i].size, vec3(0,0,0));
+            draw.box(boxes[i].getTransformation(), boxes[i].center, boxes[i].size, vec3(0,0,0));
         for (int i = 0; i < polylines.size(); i++)
             draw.polyline(mat4(), polylines[i].vertices, vec3(0,0,0));
 
