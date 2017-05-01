@@ -42,8 +42,8 @@ public:
         b2FixtureDef fixdef;
         fixdef.shape = &circleshape;
         fixdef.friction = 0.2;
-        fixdef.restitution = 0.2;
-        fixdef.density = 0.2;
+        fixdef.restitution = 0.4;
+        fixdef.density = 0.4;
         this->body->CreateFixture(&fixdef);
     }
 
@@ -95,8 +95,8 @@ public:
         b2FixtureDef fixdef;
         fixdef.shape = &polygonshape;
         fixdef.density = 0.2;
-        fixdef.friction = 0.2;
-        fixdef.restitution = 0.2;
+        fixdef.friction = 0.4;
+        fixdef.restitution = 0.4;
         body->CreateFixture(&fixdef);
     }
 
