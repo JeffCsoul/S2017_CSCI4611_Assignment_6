@@ -41,9 +41,9 @@ public:
 
         b2FixtureDef fixdef;
         fixdef.shape = &circleshape;
-        fixdef.friction = 0.5;
-        fixdef.restitution = 0.5;
-        fixdef.density = 0.5;
+        fixdef.friction = 0.2;
+        fixdef.restitution = 0.2;
+        fixdef.density = 0.2;
         this->body->CreateFixture(&fixdef);
     }
 
@@ -94,9 +94,9 @@ public:
 
         b2FixtureDef fixdef;
         fixdef.shape = &polygonshape;
-        fixdef.density = 0.5;
-        fixdef.friction = 0.5;
-        fixdef.restitution = 0.5;
+        fixdef.density = 0.2;
+        fixdef.friction = 0.2;
+        fixdef.restitution = 0.2;
         body->CreateFixture(&fixdef);
     }
 
@@ -107,7 +107,7 @@ public:
     }
 
     bool contains(vec2 worldPoint) {
-        vec2 d = getLocalPoint(worldPoint) - center;
+        vec2 d = getLocalPoint(worldPoint);
         return (abs(d.x) <= size.x/2 && abs(d.y) <= size.y/2);
     }
     mat4 getTransformation() {

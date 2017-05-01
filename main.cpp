@@ -32,7 +32,9 @@ public:
     vec2 worldMin, worldMax;
 
     b2World *world;
-    b2MouseJoint *mouse = NULL;
+
+    b2MouseJoint *mousejoint;
+    bool attached;
 
     PencilPhysics() {
         worldMin = vec2(-8, 0);
@@ -64,6 +66,9 @@ public:
         // Create two static bodies
         redCircle = Circle(vec2(-5,2), 0.5, this->world, true);
         whiteBox = Box(vec2(5,2), vec2(0.9,0.9), this->world, true);
+
+        this->mousejoint = nullptr;
+        this->attached = false;
     }
 
     void run() {
@@ -174,21 +179,55 @@ public:
         //   maxForce: 100
         //   frequencyHz: 2
         //   dampingRatio: 0.5
-
+        for (int i = 0; !this->attached && i < circles.size(); i++) {
+          if (circles[i].contains(worldPoint)) {
+            this->attached = true;
+            b2MouseJointDef mousejointdef;
+            mousejointdef.bodyA = walls.body;
+            mousejointdef.bodyB = circles[i].body;
+            mousejointdef.target = b2Vec2(worldPoint.x, worldPoint.y);
+            mousejointdef.collideConnected = true;
+            mousejointdef.maxForce = 100;
+            mousejointdef.frequencyHz = 2;
+            mousejointdef.dampingRatio = 0.5;
+            mousejoint = (b2MouseJoint *)
+                         (this->world->CreateJoint(&mousejointdef));
+          }
+        }
+        for (int i = 0; !this->attached && i < boxes.size(); i++) {
+          if (boxes[i].contains(worldPoint)) {
+            this->attached = true;
+            b2MouseJointDef mousejointdef;
+            mousejointdef.bodyA = walls.body;
+            mousejointdef.bodyB = boxes[i].body;
+            mousejointdef.target = b2Vec2(worldPoint.x, worldPoint.y);
+            mousejointdef.collideConnected = true;
+            mousejointdef.maxForce = 100;
+            mousejointdef.frequencyHz = 2;
+            mousejointdef.dampingRatio = 0.5;
+            mousejoint = (b2MouseJoint *)
+                         (this->world->CreateJoint(&mousejointdef));
+          }
+        }
     }
 
     void moveMouse(vec2 worldPoint) {
 
         // TODO: If mouseJoint is not null, use SetTarget() to update
         // its target to the given point.
-
+        if (this->attached)
+          this->mousejoint->SetTarget(b2Vec2(worldPoint.x, worldPoint.y));
     }
 
     void detachMouse() {
 
         // TODO: If mouseJoint is not null, destroy it and set it to
         // null.
-
+        if (this->attached) {
+          this->world->DestroyJoint(mousejoint);
+          mousejoint = nullptr;
+          this->attached = false;
+        }
     }
 
 };
