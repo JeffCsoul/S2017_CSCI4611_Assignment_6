@@ -62,7 +62,7 @@ public:
         wallVerts.push_back(vec2(worldMax.x, worldMax.y));
         walls = Polyline(wallVerts, this->world);
         // Create two static bodies
-        redCircle = Circle(vec2(-5,2), 0.5);
+        redCircle = Circle(vec2(-5,2), 0.5, this->world, true);
         whiteBox = Box(vec2(5,2), vec2(0.9,0.9));
     }
 
@@ -82,7 +82,7 @@ public:
 
     void addCircle() {
         vec2 position = vec2(-5,7) + 0.5*randomVec2();
-        circles.push_back(Circle(position, 0.5));
+        circles.push_back(Circle(position, 0.5, this->world ,false));
     }
 
     void addBox() {

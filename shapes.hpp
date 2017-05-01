@@ -2,8 +2,9 @@
 #define SHAPES_HPP
 
 #include <glm/glm.hpp>
-#include <vector>
+#include <glm/ext.hpp>
 #include <Box2D/Box2D.h>
+#include <vector>
 
 using namespace std;
 using glm::vec2;
@@ -18,13 +19,49 @@ class Circle {
 public:
     vec2 center;
     float radius;
+    
+    b2World *world;
+    b2Body *body;
+
     Circle() {}
-    Circle(vec2 center, float radius) {
+    Circle(vec2 center, float radius, b2World *external_world, bool fixed) {
         this->center = center;
         this->radius = radius;
+        this->world = external_world;
+        b2BodyDef bodydef;
+        if (fixed)
+          bodydef.type = b2_staticBody;
+        else
+          bodydef.type = b2_dynamicBody;
+        this->body = this->world->CreateBody(&bodydef);
+
+        b2CircleShape circleshape;
+        circleshape.m_p.Set(this->center.x, this->center.y);
+        circleshape.m_radius = this->radius;
+
+        b2FixtureDef fixdef;
+        fixdef.shape = &circleshape;
+        fixdef.friction = 0.5;
+        fixdef.restitution = 0.5;
+        fixdef.density = 0.5;
+        this->body->CreateFixture(&fixdef);
     }
+
+    vec2 getLocalPoint(vec2 worldPoint) {
+      b2Vec2 localp = this->body->GetLocalPoint(b2Vec2(worldPoint.x,
+                                                       worldPoint.y));
+      return vec2(localp.x, localp.y);
+    }
+
     bool contains(vec2 worldPoint) {
-        return glm::length(worldPoint - center) <= radius;
+        // return glm::length(worldPoint - center) <= radius;
+       return glm::length(getLocalPoint(worldPoint) - center) <= radius;
+    }
+    mat4 getTransformation() {
+      b2Vec2 pos = body->GetPosition();
+      float angle = body->GetAngle();
+      return glm::translate(vec3(pos.x,pos.y,0)) *
+             glm::rotate(angle,vec3(0,0,1));
     }
     void destroy() {}
 };
@@ -33,6 +70,10 @@ class Box {
 public:
     vec2 center;
     vec2 size;
+
+    b2World *world;
+    b2Body *body;
+
     Box() {}
     Box(vec2 center, vec2 size) {
         this->center = center;
