@@ -39,7 +39,7 @@ public:
     PencilPhysics() {
         worldMin = vec2(-8, 0);
         worldMax = vec2(8, 9);
-        window = createWindow("4611", 1280, 720);
+        window = createWindow("Pencil Physics", 1280, 720);
         camera = Camera2D(worldMin, worldMax);
         uiHelper = UIHelper(this, worldMin, worldMax, 1280, 720);
         draw = Draw(this);
